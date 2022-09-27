@@ -35,6 +35,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tB_phrase1 = new System.Windows.Forms.TextBox();
             this.lblCollectedData = new System.Windows.Forms.Label();
+            this.btnSubmitPhrase1 = new System.Windows.Forms.Button();
+            this.btnSubmitPhrase2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // tB_phrase2
@@ -76,6 +78,8 @@
             this.tB_phrase1.Name = "tB_phrase1";
             this.tB_phrase1.Size = new System.Drawing.Size(500, 50);
             this.tB_phrase1.TabIndex = 4;
+            this.tB_phrase1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tB_phrase1_KeyDown);
+            this.tB_phrase1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tB_phrase1_KeyUp);
             // 
             // lblCollectedData
             // 
@@ -85,11 +89,31 @@
             this.lblCollectedData.TabIndex = 5;
             this.lblCollectedData.Text = "Итоговые данные:";
             // 
+            // btnSubmitPhrase1
+            // 
+            this.btnSubmitPhrase1.Location = new System.Drawing.Point(550, 100);
+            this.btnSubmitPhrase1.Name = "btnSubmitPhrase1";
+            this.btnSubmitPhrase1.Size = new System.Drawing.Size(100, 50);
+            this.btnSubmitPhrase1.TabIndex = 6;
+            this.btnSubmitPhrase1.Text = "Submit";
+            this.btnSubmitPhrase1.UseVisualStyleBackColor = true;
+            // 
+            // btnSubmitPhrase2
+            // 
+            this.btnSubmitPhrase2.Location = new System.Drawing.Point(550, 220);
+            this.btnSubmitPhrase2.Name = "btnSubmitPhrase2";
+            this.btnSubmitPhrase2.Size = new System.Drawing.Size(100, 50);
+            this.btnSubmitPhrase2.TabIndex = 7;
+            this.btnSubmitPhrase2.Text = "Submit";
+            this.btnSubmitPhrase2.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnSubmitPhrase2);
+            this.Controls.Add(this.btnSubmitPhrase1);
             this.Controls.Add(this.lblCollectedData);
             this.Controls.Add(this.tB_phrase1);
             this.Controls.Add(this.label3);
@@ -101,6 +125,9 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button btnSubmitPhrase1;
+        private System.Windows.Forms.Button btnSubmitPhrase2;
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
