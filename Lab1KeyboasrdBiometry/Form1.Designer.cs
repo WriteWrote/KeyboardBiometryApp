@@ -37,6 +37,7 @@
             this.lblCollectedData = new System.Windows.Forms.Label();
             this.btnSubmitPhrase1 = new System.Windows.Forms.Button();
             this.btnSubmitPhrase2 = new System.Windows.Forms.Button();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // tB_phrase2
@@ -97,6 +98,7 @@
             this.btnSubmitPhrase1.TabIndex = 6;
             this.btnSubmitPhrase1.Text = "Submit";
             this.btnSubmitPhrase1.UseVisualStyleBackColor = true;
+            this.btnSubmitPhrase1.Click += new System.EventHandler(this.btnSubmitPhrase1_Click);
             // 
             // btnSubmitPhrase2
             // 
@@ -106,6 +108,7 @@
             this.btnSubmitPhrase2.TabIndex = 7;
             this.btnSubmitPhrase2.Text = "Submit";
             this.btnSubmitPhrase2.UseVisualStyleBackColor = true;
+            this.btnSubmitPhrase2.Click += new System.EventHandler(this.btnSubmitPhrase2_Click);
             // 
             // Form1
             // 
@@ -125,6 +128,8 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
 
         private System.Windows.Forms.Button btnSubmitPhrase1;
         private System.Windows.Forms.Button btnSubmitPhrase2;
