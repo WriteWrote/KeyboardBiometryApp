@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+
 using System.IO;
-using System.Linq;
-using System.Text;
-//using System.Threading.Tasks;
+
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
 namespace Lab1KeyboasrdBiometry
 {
@@ -19,9 +14,12 @@ namespace Lab1KeyboasrdBiometry
         // then clear them and record timings for personal phrase
         // also submit to .txt and clear
 
-        private static String FILE_PATH1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase1Log.txt";
-        private static String FILE_PATH2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase2Log.txt";
+        private static String FILE_PATH_KEYS_DOWN_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KDownLog.txt";
+        private static String FILE_PATH_KEYS_UP_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KUpLog.txt";
+        private static String FILE_PATH_KEYS_DOWN_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KDownLog.txt";
+        private static String FILE_PATH_KEYS_UP_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KUpLog.txt";
         
+
         private List<KeyValuePair<String, DateTime>> keysDownDict;
         private List<KeyValuePair<String, DateTime>> keysUpDict;
         
@@ -44,7 +42,6 @@ namespace Lab1KeyboasrdBiometry
         {
             keysUpDict.Add(new KeyValuePair<string, DateTime>(e.KeyCode.ToString(),
                                                                     DateTime.Now));
-            
         }
 
         private void btnSubmitPhrase1_Click(object sender, EventArgs e)
@@ -63,7 +60,8 @@ namespace Lab1KeyboasrdBiometry
             // }
 
             //ToDo: решить проблему с русской раскладкой
-            writeListToFile(keysDownDict, FILE_PATH1);
+            writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
+            writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
             
             keysDownDict.Clear();
             keysUpDict.Clear();
@@ -76,7 +74,8 @@ namespace Lab1KeyboasrdBiometry
             // clear dicts
             
             
-            writeListToFile(keysDownDict, FILE_PATH2);
+            writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR2);
+            writeListToFile(keysDownDict, FILE_PATH_KEYS_UP_PHR2);
             
             keysDownDict.Clear();
             keysUpDict.Clear();
@@ -91,6 +90,18 @@ namespace Lab1KeyboasrdBiometry
                     writer.WriteLine(pair.Key.ToString() + " " + pair.Value.ToString());
                 }
             }
+        }
+
+        private void tB_phrase2_KeyDown(object sender, KeyEventArgs e)
+        {
+            keysDownDict.Add(new KeyValuePair<string, DateTime>(e.KeyCode.ToString(),
+                DateTime.Now));
+        }
+
+        private void tB_phrase2_KeyUp(object sender, KeyEventArgs e)
+        {
+            keysUpDict.Add(new KeyValuePair<string, DateTime>(e.KeyCode.ToString(),
+                DateTime.Now));
         }
     }
 }

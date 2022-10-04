@@ -47,6 +47,8 @@
             this.tB_phrase2.Name = "tB_phrase2";
             this.tB_phrase2.Size = new System.Drawing.Size(500, 100);
             this.tB_phrase2.TabIndex = 0;
+            this.tB_phrase2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tB_phrase2_KeyDown);
+            this.tB_phrase2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tB_phrase2_KeyUp);
             // 
             // label1
             // 
