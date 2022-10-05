@@ -66,7 +66,7 @@ namespace Lab1KeyboasrdBiometry
             // collect timings for each case for each letter
             Dictionary<String, List<long>> timings = new Dictionary<string, List<long>>();
             String prevLetter = "";
-
+            //ToDO: change prevTime to nextTime (find initital bug)
             foreach (var letterPair in keysDownDict)
             {
                 try
@@ -99,8 +99,8 @@ namespace Lab1KeyboasrdBiometry
             {
                 writer.WriteLine("DateTime: " + DateTime.Now.ToString());
                 writer.WriteLine("Phrase 1 stats:\n");
-                writer.WriteLine("Average speed: " + typingSpeed);
-                writer.WriteLine("\nLetterholding speed:\n");
+                writer.WriteLine("Average speed: " + typingSpeed + " nanoseconds for one letter");
+                writer.WriteLine("\nLetterholding speed:");
                 
                 foreach (var letterTime in timings)
                 {
@@ -112,7 +112,7 @@ namespace Lab1KeyboasrdBiometry
 
                     sum = sum / letterTime.Value.Count;
 
-                    writer.WriteLine("Letter " + letterTime.Key.ToString() + " time= " + sum.ToString());
+                    writer.WriteLine(letterTime.Key.ToString() + " = " + sum.ToString());
                 }
             }
             
