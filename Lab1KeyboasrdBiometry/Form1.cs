@@ -51,8 +51,7 @@ namespace Lab1KeyboasrdBiometry
         {
             writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
             writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
-
-            // TODO:calculate
+            
             /*
     	скорость ввода - количество введенных символов, разделенное на время печатания;
     	динамика ввода - характеризуется временем между нажатиями клавиш и временем их удержания;
@@ -90,26 +89,33 @@ namespace Lab1KeyboasrdBiometry
                 finally
                 {
                     prevTime = letterPair.Value;
-                    prevLetter = letterPair.Key;   
+                    prevLetter = letterPair.Key;
                 }
             }
 
             //go through timings for each letter and find a medium value
-            foreach (var letterTime in timings)
+            //also writing statistic
+            using (StreamWriter writer = new StreamWriter(FILE_PATH_STATS1))
             {
-                long sum = 0;
-                foreach (var time in letterTime.Value)
+                writer.WriteLine("DateTime: " + DateTime.Now.ToString());
+                writer.WriteLine("Phrase 1 stats:\n");
+                writer.WriteLine("Average speed: " + typingSpeed);
+                writer.WriteLine("\nLetterholding speed:\n");
+                
+                foreach (var letterTime in timings)
                 {
-                    sum += time;
-                }
+                    long sum = 0;
+                    foreach (var time in letterTime.Value)
+                    {
+                        sum += time;
+                    }
 
-                sum = sum / letterTime.Value.Count;
-                //TODO: write letter and medium value to .txt
+                    sum = sum / letterTime.Value.Count;
+
+                    writer.WriteLine("Letter " + letterTime.Key.ToString() + " time= " + sum.ToString());
+                }
             }
             
-
-            // TODO:push text in the .txt for second phrase
-
             // clear dicts
             keysDownDict.Clear();
             keysUpDict.Clear();
