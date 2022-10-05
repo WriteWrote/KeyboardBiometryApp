@@ -8,17 +8,18 @@ namespace Lab1KeyboasrdBiometry
 {
     public partial class Form1 : Form
     {
-        private static String FILE_PATH_KEYS_DOWN_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KDownLog.txt";
-        private static String FILE_PATH_KEYS_UP_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KUpLog.txt";
-        private static String FILE_PATH_KEYS_DOWN_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KDownLog.txt";
-        private static String FILE_PATH_KEYS_UP_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KUpLog.txt";
-        private static String FILE_PATH_STATS1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase1Stats.txt";
-        private static String FILE_PATH_STATS2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase2Stats.txt";
-        private static String FILE_PATH_PASSWORD = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\currentKeyPhrase.txt";
-
+        private const String FILE_PATH_KEYS_DOWN_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KDownLog.txt";
+        private const String FILE_PATH_KEYS_UP_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KUpLog.txt";
+        private const String FILE_PATH_KEYS_DOWN_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KDownLog.txt";
+        private const String FILE_PATH_KEYS_UP_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KUpLog.txt";
+        private const String FILE_PATH_STATS1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase1Stats.txt";
+        private const String FILE_PATH_STATS2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase2Stats.txt";
+        private const String FILE_PATH_PASSWORD = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\currentKeyPhrase.txt";
 
         private List<KeyValuePair<String, long>> keysDownDict;
         private List<KeyValuePair<String, long>> keysUpDict;
+
+        private long prevTime = 0;
 
         public Form1()
         {
@@ -31,6 +32,11 @@ namespace Lab1KeyboasrdBiometry
 
         private void tB_phrase1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (tB_phrase1.Text.Equals(""))
+            {
+                prevTime = GetNanoseconds();
+            }
+
             keysDownDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
                 GetNanoseconds()));
         }
@@ -43,14 +49,68 @@ namespace Lab1KeyboasrdBiometry
 
         private void btnSubmitPhrase1_Click(object sender, EventArgs e)
         {
-            // calculate and
-            // push text in the .txt for first phrase 
-            // clear dicts
-
-            //ToDo: решить проблему с русской раскладкой
             writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
             writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
 
+            // TODO:calculate
+            /*
+    	скорость ввода - количество введенных символов, разделенное на время печатания;
+    	динамика ввода - характеризуется временем между нажатиями клавиш и временем их удержания;
+    	частота возникновение ошибок при вводе;
+    	использование клавиш - например, какие функциональные клавиши нажимаются для 
+        ввода заглавных букв.
+             */
+
+            long typingSpeed = (keysUpDict[keysUpDict.Count - 1].Value - keysDownDict[0].Value) /
+                               keysUpDict.Count;
+
+            // collect timings for each case for each letter
+            Dictionary<String, List<long>> timings = new Dictionary<string, List<long>>();
+            String prevLetter = "";
+
+            foreach (var letterPair in keysDownDict)
+            {
+                try
+                {
+                    timings.Add(letterPair.Key, new List<long>());
+                    timings[letterPair.Key].Add(letterPair.Value - prevTime);
+                }
+                catch (Exception ex)
+                {
+                    if (prevLetter.Equals(letterPair.Key))
+                    {
+                        int length = timings[letterPair.Key].Count;
+                        timings[letterPair.Key][length - 1] += (letterPair.Value - prevTime);
+                    }
+                    else
+                    {
+                        timings[letterPair.Key].Add(letterPair.Value - prevTime);
+                    }
+                }
+                finally
+                {
+                    prevTime = letterPair.Value;
+                    prevLetter = letterPair.Key;   
+                }
+            }
+
+            //go through timings for each letter and find a medium value
+            foreach (var letterTime in timings)
+            {
+                long sum = 0;
+                foreach (var time in letterTime.Value)
+                {
+                    sum += time;
+                }
+
+                sum = sum / letterTime.Value.Count;
+                //TODO: write letter and medium value to .txt
+            }
+            
+
+            // TODO:push text in the .txt for second phrase
+
+            // clear dicts
             keysDownDict.Clear();
             keysUpDict.Clear();
         }
@@ -61,12 +121,10 @@ namespace Lab1KeyboasrdBiometry
             writeListToFile(keysDownDict, FILE_PATH_KEYS_UP_PHR2);
 
             // calculate and
-
-
-            // push text in the .txt for second phrase
-
-
+            // push text in the .txt for first phrase 
             // clear dicts
+
+            //ToDo: решить проблему с русской раскладкой
 
             keysDownDict.Clear();
             keysUpDict.Clear();
