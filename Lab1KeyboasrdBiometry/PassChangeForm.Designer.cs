@@ -63,6 +63,7 @@ namespace Lab1KeyboasrdBiometry
             this.btn_ChangePass.TabIndex = 2;
             this.btn_ChangePass.Text = "Задать";
             this.btn_ChangePass.UseVisualStyleBackColor = true;
+            this.btn_ChangePass.Click += new System.EventHandler(this.btn_ChangePass_Click);
             // 
             // tb_ConfirmNewPass
             // 

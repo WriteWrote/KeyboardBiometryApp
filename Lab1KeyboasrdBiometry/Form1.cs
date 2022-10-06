@@ -8,13 +8,13 @@ namespace Lab1KeyboasrdBiometry
 {
     public partial class Form1 : Form
     {
-        private const String FILE_PATH_KEYS_DOWN_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KDownLog.txt";
-        private const String FILE_PATH_KEYS_UP_PHR1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr1KUpLog.txt";
-        private const String FILE_PATH_KEYS_DOWN_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KDownLog.txt";
-        private const String FILE_PATH_KEYS_UP_PHR2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phr2KUpLog.txt";
-        private const String FILE_PATH_STATS1 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase1Stats.txt";
-        private const String FILE_PATH_STATS2 = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\phrase2Stats.txt";
-        private const String FILE_PATH_PASSWORD = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\currentKeyPhrase.txt";
+        private const String FILE_PATH_KEYS_DOWN_PHR1 = "phr1KDownLog.txt";
+        private const String FILE_PATH_KEYS_UP_PHR1 = "phr1KUpLog.txt";
+        private const String FILE_PATH_KEYS_DOWN_PHR2 = "phr2KDownLog.txt";
+        private const String FILE_PATH_KEYS_UP_PHR2 = "phr2KUpLog.txt";
+        private const String FILE_PATH_STATS1 = "phrase1Stats.txt";
+        private const String FILE_PATH_STATS2 = "phrase2Stats.txt";
+        private const String FILE_PATH_PASSWORD = "currentKeyPhrase.txt";
 
         private List<KeyValuePair<String, long>> keysDownDict;
         private List<KeyValuePair<String, long>> keysUpDict;
@@ -153,8 +153,8 @@ namespace Lab1KeyboasrdBiometry
         private static void CalculateStats(String number, String filepath, List<KeyValuePair<String, long>> upList,
             List<KeyValuePair<String, long>> downList)
         {
-            int backCount = 0;
-            int spaceCount = 0;
+            Double backCount = 0;
+            Double spaceCount = 0;
             long typingSpeed = (upList[upList.Count - 1].Value - downList[0].Value) /
                                upList.Count;
             // get diffs betw kDownDict and kUpDict to know how much nanos took each button to hold
@@ -205,12 +205,12 @@ namespace Lab1KeyboasrdBiometry
 
                     if (l.Key.Equals(Keys.Back.ToString()))
                     {
-                        ++backCount;
+                        backCount += l.Value.Count;
                     }
 
                     if (l.Key.Equals(Keys.Space.ToString()))
                     {
-                        ++spaceCount;
+                        spaceCount += l.Value.Count;
                     }
                 }
 
@@ -218,14 +218,21 @@ namespace Lab1KeyboasrdBiometry
 
                 writer.WriteLine("\nAverage holding time: " + averageHoldingTime.ToString());
                 writer.WriteLine("Speed: " + typingSpeed.ToString() + " nanos for one letter");
-                writer.WriteLine("Errors: " + backCount/(spaceCount+1) + "error/word in average");
+                Double d = backCount / (spaceCount + 1);
+                writer.WriteLine("Errors: " + d.ToString() + " error/word in average");
                 writer.WriteLine();
             }
         }
 
         private void btn_ChangePassword_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            PassChangeForm passChangeForm = new PassChangeForm(this);
+            passChangeForm.Show();
+        }
+
+        public void SetPass(String password)
+        {
+            this.password = password;
         }
     }
 }
