@@ -40,8 +40,12 @@ namespace Lab1KeyboasrdBiometry
 
         private void tB_phrase1_KeyUp(object sender, KeyEventArgs e)
         {
-            keysUpDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
-                GetNanoseconds()));
+            if (keysUpDict.Count == 0 ||
+                !keysUpDict[keysUpDict.Count - 1].Key.Equals(e.KeyCode.ToString()))
+            {
+                keysUpDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
+                    GetNanoseconds()));
+            }
         }
 
         private void btnSubmitPhrase1_Click(object sender, EventArgs e)
@@ -49,81 +53,7 @@ namespace Lab1KeyboasrdBiometry
             writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
             writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
 
-            long typingSpeed = (keysUpDict[keysUpDict.Count - 1].Value - keysDownDict[0].Value) /
-                               keysUpDict.Count;
-
-            // collect timings for each case for each letter
-            Dictionary<String, List<long>> timings = new Dictionary<string, List<long>>();
-            List<long> pureTime = new List<long>();
-            String prevLetter = "";
-            long prevTime = keysDownDict[0].Value;
-            //ToDO: change prevTime to nextTime (find initital bug)
-            foreach (var letterPair in keysDownDict)
-            {
-                try
-                {
-                    timings.Add(letterPair.Key, new List<long>());
-                    timings[letterPair.Key].Add(letterPair.Value - prevTime);
-                }
-                catch (Exception ex)
-                {
-                    if (prevLetter.Equals(letterPair.Key))
-                    {
-                        int length = timings[letterPair.Key].Count;
-                        timings[letterPair.Key][length - 1] += (letterPair.Value - prevTime);
-                    }
-                    else
-                    {
-                        timings[letterPair.Key].Add(letterPair.Value - prevTime);
-                    }
-                }
-                finally
-                {
-                    prevTime = letterPair.Value;
-                    prevLetter = letterPair.Key;
-                }
-            }
-
-            //go through timings for each letter and find a medium value
-            //also writing statistic
-            using (StreamWriter writer = new StreamWriter(FILE_PATH_STATS1))
-            {
-                writer.WriteLine("DateTime: " + DateTime.Now.ToString());
-                writer.WriteLine("Phrase 1 stats:\n");
-                writer.WriteLine("Average speed: " + typingSpeed + " nanoseconds for one letter");
-                writer.WriteLine("\nLetterholding speed:");
-
-                long pureTimeHolding = 0;
-                int pureNumberOfHoldings = 0;
-                foreach (var letterTime in timings)
-                {
-                    long sum = 0;
-                    foreach (var time in letterTime.Value)
-                    {
-                        sum += time;
-                        pureTimeHolding += time;
-                        ++pureNumberOfHoldings;
-                    }
-
-                    sum = sum / letterTime.Value.Count;
-
-                    writer.WriteLine(letterTime.Key.ToString() + " = " + sum.ToString() + " nanos");
-                }
-
-                try
-                {
-                    pureTimeHolding = pureTimeHolding / pureNumberOfHoldings;
-                }
-                catch (DivideByZeroException ex)
-                {
-                    pureTimeHolding = 0;
-                    writer.WriteLine("No typings, so");
-                }
-                finally
-                {
-                    writer.WriteLine("Average holding key time: " + pureTimeHolding + " nanoseconds");
-                }
-            }
+            CalculateStats("1", FILE_PATH_STATS1, keysUpDict, keysDownDict);
 
             // clear dicts
             keysDownDict.Clear();
@@ -135,11 +65,7 @@ namespace Lab1KeyboasrdBiometry
             writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR2);
             writeListToFile(keysDownDict, FILE_PATH_KEYS_UP_PHR2);
 
-            // calculate and
-            // push text in the .txt for first phrase 
-            // clear dicts
-
-            //ToDo: решить проблему с русской раскладкой
+            CalculateStats("2", FILE_PATH_STATS2, keysUpDict, keysDownDict);
 
             keysDownDict.Clear();
             keysUpDict.Clear();
@@ -173,14 +99,80 @@ namespace Lab1KeyboasrdBiometry
             //ToDo: recover stats from statsNNN.txt
             //TODO: make some predictions where this is actually user or not
             //ToDo: * make graphics 
+            //TODO: посчитать количество ошибок на количество пробелов
+            //todo: сделать задание контрольной фразы
+            //todo: оценить сложность контрольной фразы
+            //todo: сделать проверку контрольной фразы на совпадение 
+            //todo: сделать ДОписывание, а не ПЕРЕписывание документов о статистике
+            //ToDo: решить проблему с русской раскладкой
         }
 
-        public static long GetNanoseconds()
+        private static long GetNanoseconds()
         {
             double timestamp = Stopwatch.GetTimestamp();
             double nanoseconds = 1_000_000_000.0 * timestamp / Stopwatch.Frequency;
 
             return (long)nanoseconds;
+        }
+
+        private static void CalculateStats(String number, String filepath, List<KeyValuePair<String, long>> upList,
+            List<KeyValuePair<String, long>> downList)
+        {
+            long typingSpeed = (upList[upList.Count - 1].Value - downList[0].Value) /
+                               upList.Count;
+            // get diffs betw kDownDict and kUpDict to know how much nanos took each button to hold
+            Dictionary<String, List<long>> dict = new Dictionary<string, List<long>>();
+            foreach (var pair in upList)
+            {
+                var letter = new KeyValuePair<String, long>();
+                foreach (var p in downList)
+                {
+                    if (p.Key.Equals(pair.Key))
+                    {
+                        letter = p;
+                    }
+                }
+
+                downList.Remove(letter);
+
+                // thus we get a list of letter - holding time
+                // all diffs write into a dict
+                if (!dict.ContainsKey(pair.Key))
+                {
+                    dict.Add(pair.Key, new List<long>());
+                }
+
+                dict[pair.Key].Add(pair.Value - letter.Value);
+            }
+
+            // after this go through dict and find a middle value of holding time for each letter
+            // also calculate average holding time for all letters
+            long averageHoldingTime = 0;
+            int count = 0;
+            using (StreamWriter writer = new StreamWriter(filepath))
+            {
+                writer.WriteLine(DateTime.Now.ToString() + "\nPhrase " + number.ToString() + " stats:\n");
+
+                foreach (var l in dict)
+                {
+                    long time = 0;
+                    foreach (var t in l.Value)
+                    {
+                        averageHoldingTime += t;
+                        time += t;
+                    }
+
+                    count += l.Value.Count;
+                    long hold = time / l.Value.Count;
+                    writer.WriteLine(l.Key.ToString() + " -> " + hold.ToString());
+                }
+
+                averageHoldingTime /= count;
+
+                writer.WriteLine("\nAverage holding time: " + averageHoldingTime.ToString());
+                writer.WriteLine("Speed: " + typingSpeed.ToString() + " nanos for one letter");
+                writer.WriteLine();
+            }
         }
     }
 }
