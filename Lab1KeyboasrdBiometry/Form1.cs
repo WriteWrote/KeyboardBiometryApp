@@ -83,8 +83,7 @@ namespace Lab1KeyboasrdBiometry
                 writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR2);
 
                 CalculateStats("2", FILE_PATH_STATS2, keysUpDict, keysDownDict);
-
-                //todo: сделать проверку контрольной фразы на совпадение 
+                
                 if (!password.Equals(tB_phrase2.Text))
                 {
                     MessageBox.Show("Password is incorrect, dummy!");
@@ -136,11 +135,10 @@ namespace Lab1KeyboasrdBiometry
             //ToDo: recover stats from statsNNN.txt
             //TODO: make some predictions where this is actually user or not
             //ToDo: * make graphics 
-            //TODO: посчитать количество ошибок на количество пробелов
-            //todo: сделать задание контрольной фразы
+            
             //todo: оценить сложность контрольной фразы
 
-            //todo: сделать ДОписывание, а не ПЕРЕписывание документов о статистике
+            
             //ToDo: решить проблему с русской раскладкой
         }
 
@@ -155,6 +153,8 @@ namespace Lab1KeyboasrdBiometry
         private static void CalculateStats(String number, String filepath, List<KeyValuePair<String, long>> upList,
             List<KeyValuePair<String, long>> downList)
         {
+            int backCount = 0;
+            int spaceCount = 0;
             long typingSpeed = (upList[upList.Count - 1].Value - downList[0].Value) /
                                upList.Count;
             // get diffs betw kDownDict and kUpDict to know how much nanos took each button to hold
@@ -202,14 +202,30 @@ namespace Lab1KeyboasrdBiometry
                     count += l.Value.Count;
                     long hold = time / l.Value.Count;
                     writer.WriteLine(l.Key.ToString() + " -> " + hold.ToString());
+
+                    if (l.Key.Equals(Keys.Back.ToString()))
+                    {
+                        ++backCount;
+                    }
+
+                    if (l.Key.Equals(Keys.Space.ToString()))
+                    {
+                        ++spaceCount;
+                    }
                 }
 
                 averageHoldingTime /= count;
 
                 writer.WriteLine("\nAverage holding time: " + averageHoldingTime.ToString());
                 writer.WriteLine("Speed: " + typingSpeed.ToString() + " nanos for one letter");
+                writer.WriteLine("Errors: " + backCount/(spaceCount+1) + "error/word in average");
                 writer.WriteLine();
             }
+        }
+
+        private void btn_ChangePassword_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

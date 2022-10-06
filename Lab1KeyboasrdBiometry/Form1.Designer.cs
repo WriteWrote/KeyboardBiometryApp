@@ -39,6 +39,7 @@
             this.btnSubmitPhrase2 = new System.Windows.Forms.Button();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.button_CalcRes = new System.Windows.Forms.Button();
+            this.btn_ChangePassword = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // tB_phrase2
@@ -123,11 +124,22 @@
             this.button_CalcRes.UseVisualStyleBackColor = true;
             this.button_CalcRes.Click += new System.EventHandler(this.button_CalcRes_Click);
             // 
+            // btn_ChangePassword
+            // 
+            this.btn_ChangePassword.Location = new System.Drawing.Point(676, 220);
+            this.btn_ChangePassword.Name = "btn_ChangePassword";
+            this.btn_ChangePassword.Size = new System.Drawing.Size(100, 50);
+            this.btn_ChangePassword.TabIndex = 9;
+            this.btn_ChangePassword.Text = "Сменить пароль";
+            this.btn_ChangePassword.UseVisualStyleBackColor = true;
+            this.btn_ChangePassword.Click += new System.EventHandler(this.btn_ChangePassword_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btn_ChangePassword);
             this.Controls.Add(this.button_CalcRes);
             this.Controls.Add(this.btnSubmitPhrase2);
             this.Controls.Add(this.btnSubmitPhrase1);
@@ -142,6 +154,8 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button btn_ChangePassword;
 
         private System.Windows.Forms.Button button_CalcRes;
 
