@@ -19,8 +19,6 @@ namespace Lab1KeyboasrdBiometry
         private List<KeyValuePair<String, long>> keysDownDict;
         private List<KeyValuePair<String, long>> keysUpDict;
 
-        private long prevTime = 0;
-
         public Form1()
         {
             InitializeComponent();
@@ -32,13 +30,12 @@ namespace Lab1KeyboasrdBiometry
 
         private void tB_phrase1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (tB_phrase1.Text.Equals(""))
+            if (keysDownDict.Count == 0 ||
+                !keysDownDict[keysDownDict.Count - 1].Key.Equals(e.KeyCode.ToString()))
             {
-                prevTime = GetNanoseconds();
+                keysDownDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
+                    GetNanoseconds()));
             }
-
-            keysDownDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
-                GetNanoseconds()));
         }
 
         private void tB_phrase1_KeyUp(object sender, KeyEventArgs e)
@@ -51,21 +48,15 @@ namespace Lab1KeyboasrdBiometry
         {
             writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
             writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
-            
-            /*
-    	скорость ввода - количество введенных символов, разделенное на время печатания;
-    	динамика ввода - характеризуется временем между нажатиями клавиш и временем их удержания;
-    	частота возникновение ошибок при вводе;
-    	использование клавиш - например, какие функциональные клавиши нажимаются для 
-        ввода заглавных букв.
-             */
 
             long typingSpeed = (keysUpDict[keysUpDict.Count - 1].Value - keysDownDict[0].Value) /
                                keysUpDict.Count;
 
             // collect timings for each case for each letter
             Dictionary<String, List<long>> timings = new Dictionary<string, List<long>>();
+            List<long> pureTime = new List<long>();
             String prevLetter = "";
+            long prevTime = keysDownDict[0].Value;
             //ToDO: change prevTime to nextTime (find initital bug)
             foreach (var letterPair in keysDownDict)
             {
@@ -101,21 +92,39 @@ namespace Lab1KeyboasrdBiometry
                 writer.WriteLine("Phrase 1 stats:\n");
                 writer.WriteLine("Average speed: " + typingSpeed + " nanoseconds for one letter");
                 writer.WriteLine("\nLetterholding speed:");
-                
+
+                long pureTimeHolding = 0;
+                int pureNumberOfHoldings = 0;
                 foreach (var letterTime in timings)
                 {
                     long sum = 0;
                     foreach (var time in letterTime.Value)
                     {
                         sum += time;
+                        pureTimeHolding += time;
+                        ++pureNumberOfHoldings;
                     }
 
                     sum = sum / letterTime.Value.Count;
 
-                    writer.WriteLine(letterTime.Key.ToString() + " = " + sum.ToString());
+                    writer.WriteLine(letterTime.Key.ToString() + " = " + sum.ToString() + " nanos");
+                }
+
+                try
+                {
+                    pureTimeHolding = pureTimeHolding / pureNumberOfHoldings;
+                }
+                catch (DivideByZeroException ex)
+                {
+                    pureTimeHolding = 0;
+                    writer.WriteLine("No typings, so");
+                }
+                finally
+                {
+                    writer.WriteLine("Average holding key time: " + pureTimeHolding + " nanoseconds");
                 }
             }
-            
+
             // clear dicts
             keysDownDict.Clear();
             keysUpDict.Clear();
@@ -140,7 +149,7 @@ namespace Lab1KeyboasrdBiometry
         {
             using (StreamWriter writer = new StreamWriter(filepath))
             {
-                foreach (var pair in keysDownDict)
+                foreach (var pair in list)
                 {
                     writer.WriteLine(pair.Key.ToString() + " " + pair.Value.ToString());
                 }
