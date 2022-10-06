@@ -19,12 +19,19 @@ namespace Lab1KeyboasrdBiometry
         private List<KeyValuePair<String, long>> keysDownDict;
         private List<KeyValuePair<String, long>> keysUpDict;
 
+        private String password;
+
         public Form1()
         {
             InitializeComponent();
 
             keysDownDict = new List<KeyValuePair<string, long>>();
             keysUpDict = new List<KeyValuePair<string, long>>();
+
+            using (StreamReader reader = new StreamReader(FILE_PATH_PASSWORD))
+            {
+                password = reader.ReadLine();
+            }
         }
 
 
@@ -50,30 +57,52 @@ namespace Lab1KeyboasrdBiometry
 
         private void btnSubmitPhrase1_Click(object sender, EventArgs e)
         {
-            writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
-            writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
+            if (tB_phrase1.Text != "")
+            {
+                writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
+                writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
 
-            CalculateStats("1", FILE_PATH_STATS1, keysUpDict, keysDownDict);
+                CalculateStats("1", FILE_PATH_STATS1, keysUpDict, keysDownDict);
 
-            // clear dicts
-            keysDownDict.Clear();
-            keysUpDict.Clear();
+                // clear dicts
+                keysDownDict.Clear();
+                keysUpDict.Clear();
+                tB_phrase1.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Type something, dummy!");
+            }
         }
 
         private void btnSubmitPhrase2_Click(object sender, EventArgs e)
         {
-            writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR2);
-            writeListToFile(keysDownDict, FILE_PATH_KEYS_UP_PHR2);
+            if (tB_phrase2.Text != "")
+            {
+                writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR2);
+                writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR2);
 
-            CalculateStats("2", FILE_PATH_STATS2, keysUpDict, keysDownDict);
+                CalculateStats("2", FILE_PATH_STATS2, keysUpDict, keysDownDict);
 
-            keysDownDict.Clear();
-            keysUpDict.Clear();
+                //todo: сделать проверку контрольной фразы на совпадение 
+                if (!password.Equals(tB_phrase2.Text))
+                {
+                    MessageBox.Show("Password is incorrect, dummy!");
+                }
+                
+                keysDownDict.Clear();
+                keysUpDict.Clear();
+                tB_phrase2.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Type something, dummy!");
+            }
         }
 
         private void writeListToFile(List<KeyValuePair<String, long>> list, String filepath)
         {
-            using (StreamWriter writer = new StreamWriter(filepath))
+            using (StreamWriter writer = new StreamWriter(filepath, true))
             {
                 foreach (var pair in list)
                 {
@@ -84,14 +113,22 @@ namespace Lab1KeyboasrdBiometry
 
         private void tB_phrase2_KeyDown(object sender, KeyEventArgs e)
         {
-            keysDownDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
-                GetNanoseconds()));
+            if (keysDownDict.Count == 0 ||
+                !keysDownDict[keysDownDict.Count - 1].Key.Equals(e.KeyCode.ToString()))
+            {
+                keysDownDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
+                    GetNanoseconds()));
+            }
         }
 
         private void tB_phrase2_KeyUp(object sender, KeyEventArgs e)
         {
-            keysUpDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
-                GetNanoseconds()));
+            if (keysUpDict.Count == 0 ||
+                !keysUpDict[keysUpDict.Count - 1].Key.Equals(e.KeyCode.ToString()))
+            {
+                keysUpDict.Add(new KeyValuePair<string, long>(e.KeyCode.ToString(),
+                    GetNanoseconds()));
+            }
         }
 
         private void button_CalcRes_Click(object sender, EventArgs e)
@@ -102,7 +139,7 @@ namespace Lab1KeyboasrdBiometry
             //TODO: посчитать количество ошибок на количество пробелов
             //todo: сделать задание контрольной фразы
             //todo: оценить сложность контрольной фразы
-            //todo: сделать проверку контрольной фразы на совпадение 
+
             //todo: сделать ДОписывание, а не ПЕРЕписывание документов о статистике
             //ToDo: решить проблему с русской раскладкой
         }
@@ -149,7 +186,7 @@ namespace Lab1KeyboasrdBiometry
             // also calculate average holding time for all letters
             long averageHoldingTime = 0;
             int count = 0;
-            using (StreamWriter writer = new StreamWriter(filepath))
+            using (StreamWriter writer = new StreamWriter(filepath, true))
             {
                 writer.WriteLine(DateTime.Now.ToString() + "\nPhrase " + number.ToString() + " stats:\n");
 
