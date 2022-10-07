@@ -142,11 +142,7 @@ namespace Lab1KeyboasrdBiometry
             //ToDo: recover stats from statsNNN.txt
             // STATS for all times
             // calculate average time for holding for each letter
-            Dictionary<String, List<long>> allKeyHoldings = new Dictionary<string, List<long>>();
             Dictionary<String, long> avgKeyHoldings = new Dictionary<string, long>();
-            List<long> avgSpeeds = new List<long>();
-            List<long> avgHoldings = new List<long>();
-            List<Double> avgErrors = new List<double>();
             // average nanos for one tap
             long avgSpeed = 0;
             // average holding time for average letter
@@ -154,36 +150,22 @@ namespace Lab1KeyboasrdBiometry
             // average expectations of errors
             Double avgError = 0.0;
 
-            // score should be at least == 5 for now (if the password was correct)
+            CalcStats(FILE_PATH_STATS1,
+                avgSpeed,
+                avgHolding,
+                avgError,
+                avgKeyHoldings
+            );
 
-            ReadStats(allKeyHoldings, avgSpeeds, avgHoldings, avgErrors, FILE_PATH_STATS1);
+            //ToDo: make ClearAll for not-in-void params (clear avg-w/out-s)
+            //ClearAll(avgErrors, avgKeyHoldings, allKeyHoldings, avgSpeeds, avgHoldings);
 
-            foreach (var speed in avgSpeeds)
-            {
-                avgSpeed += speed;                
-            }
-            avgSpeed /= avgSpeeds.Count;
-
-            foreach (var holding in avgHoldings)
-            {
-                avgHolding += holding;
-            }
-            avgHolding /= avgHoldings.Count;
-
-            foreach (var error in avgErrors)
-            {
-                avgError += error;
-            }
-            avgError /= avgErrors.Count;
-            
-            
-
-            ClearAll(avgErrors, avgKeyHoldings, allKeyHoldings, avgSpeeds, avgHoldings);
-
-
-            ReadStats(allKeyHoldings, avgSpeeds, avgHoldings, avgErrors, FILE_PATH_STATS2);
-
-
+            CalcStats(FILE_PATH_STATS2,
+                avgSpeed,
+                avgHolding,
+                avgError,
+                avgKeyHoldings
+            );
             //TODO: make some predictions where this is actually user or not
             //ToDo: * make graphics 
 
@@ -308,7 +290,7 @@ namespace Lab1KeyboasrdBiometry
             }
         }
 
-        private static void ClearAll<T, K, M>(List<K> oneL, Dictionary<M,T> dict1,
+        private static void ClearAll<T, K, M>(List<K> oneL, Dictionary<M, T> dict1,
             Dictionary<M, List<T>> dict2, params List<T>[] lists)
         {
             foreach (List<T> list in lists)
@@ -319,6 +301,51 @@ namespace Lab1KeyboasrdBiometry
             oneL.Clear();
             dict1.Clear();
             dict2.Clear();
+        }
+
+        private void CalcStats(String filepath, long avgSpeed, long avgHolding, Double avgError,
+            Dictionary<String, long> avgKeyHoldings)
+        {
+            // score should be at least == 5 for now (if the password was correct)
+            Dictionary<String, List<long>> allKeyHoldings = new Dictionary<string, List<long>>();
+            List<long> avgSpeeds = new List<long>();
+            List<long> avgHoldings = new List<long>();
+            List<Double> avgErrors = new List<double>();
+
+            ReadStats(allKeyHoldings, avgSpeeds, avgHoldings, avgErrors, filepath);
+
+            foreach (var speed in avgSpeeds)
+            {
+                avgSpeed += speed;
+            }
+
+            avgSpeed /= avgSpeeds.Count;
+
+            foreach (var holding in avgHoldings)
+            {
+                avgHolding += holding;
+            }
+
+            avgHolding /= avgHoldings.Count;
+
+            foreach (var error in avgErrors)
+            {
+                avgError += error;
+            }
+
+            avgError /= avgErrors.Count;
+
+            foreach (var keyHolding in allKeyHoldings)
+            {
+                long res = 0;
+                foreach (var holding in keyHolding.Value)
+                {
+                    res += holding;
+                }
+
+                res /= keyHolding.Value.Count;
+                avgKeyHoldings.Add(keyHolding.Key, res);
+            }
         }
     }
 }
