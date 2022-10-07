@@ -21,6 +21,9 @@ namespace Lab1KeyboasrdBiometry
 
         private String password;
 
+        // score for decision making
+        private int score = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -83,12 +86,16 @@ namespace Lab1KeyboasrdBiometry
                 writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR2);
 
                 CalculateStats("2", FILE_PATH_STATS2, keysUpDict, keysDownDict);
-                
+
                 if (!password.Equals(tB_phrase2.Text))
                 {
                     MessageBox.Show("Password is incorrect, dummy!");
                 }
-                
+                else
+                {
+                    score += 5;
+                }
+
                 keysDownDict.Clear();
                 keysUpDict.Clear();
                 tB_phrase2.Text = "";
@@ -133,12 +140,53 @@ namespace Lab1KeyboasrdBiometry
         private void button_CalcRes_Click(object sender, EventArgs e)
         {
             //ToDo: recover stats from statsNNN.txt
+            // STATS for all times
+            // calculate average time for holding for each letter
+            Dictionary<String, List<long>> allKeyHoldings = new Dictionary<string, List<long>>();
+            Dictionary<String, long> avgKeyHoldings = new Dictionary<string, long>();
+            List<long> avgSpeeds = new List<long>();
+            List<long> avgHoldings = new List<long>();
+            List<Double> avgErrors = new List<double>();
+            // average nanos for one tap
+            long avgSpeed = 0;
+            // average holding time for average letter
+            long avgHolding = 0;
+            // average expectations of errors
+            Double avgError = 0.0;
+
+            // score should be at least == 5 for now (if the password was correct)
+
+            ReadStats(allKeyHoldings, avgSpeeds, avgHoldings, avgErrors, FILE_PATH_STATS1);
+
+            foreach (var speed in avgSpeeds)
+            {
+                avgSpeed += speed;                
+            }
+            avgSpeed /= avgSpeeds.Count;
+
+            foreach (var holding in avgHoldings)
+            {
+                avgHolding += holding;
+            }
+            avgHolding /= avgHoldings.Count;
+
+            foreach (var error in avgErrors)
+            {
+                avgError += error;
+            }
+            avgError /= avgErrors.Count;
+            
+            
+
+            ClearAll(avgErrors, avgKeyHoldings, allKeyHoldings, avgSpeeds, avgHoldings);
+
+
+            ReadStats(allKeyHoldings, avgSpeeds, avgHoldings, avgErrors, FILE_PATH_STATS2);
+
+
             //TODO: make some predictions where this is actually user or not
             //ToDo: * make graphics 
-            
-            //todo: оценить сложность контрольной фразы
 
-            
             //ToDo: решить проблему с русской раскладкой
         }
 
@@ -188,7 +236,7 @@ namespace Lab1KeyboasrdBiometry
             int count = 0;
             using (StreamWriter writer = new StreamWriter(filepath, true))
             {
-                writer.WriteLine(DateTime.Now.ToString() + "\nPhrase " + number.ToString() + " stats:\n");
+                //writer.WriteLine(DateTime.Now.ToString() + "\nPhrase " + number.ToString() + " stats:\n");
 
                 foreach (var l in dict)
                 {
@@ -233,6 +281,44 @@ namespace Lab1KeyboasrdBiometry
         public void SetPass(String password)
         {
             this.password = password;
+        }
+
+        private static void ReadStats(Dictionary<String, List<long>> allKeyHoldings,
+            List<long> avgSpeeds,
+            List<long> avgHoldings,
+            List<Double> avgErrors,
+            String filepath)
+        {
+            using (StreamReader reader = new StreamReader(filepath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    String line = reader.ReadLine();
+                    /*
+                    dateTime
+                    filename phrase 2 stats:
+                    el
+                    key -> <long>
+                    el
+                    average holding time: <long>
+                    Speed: <long> nanos for one letter
+                    Errors: <Double> error/word in average
+                    */
+                }
+            }
+        }
+
+        private static void ClearAll<T, K, M>(List<K> oneL, Dictionary<M,T> dict1,
+            Dictionary<M, List<T>> dict2, params List<T>[] lists)
+        {
+            foreach (List<T> list in lists)
+            {
+                list.Clear();
+            }
+
+            oneL.Clear();
+            dict1.Clear();
+            dict2.Clear();
         }
     }
 }

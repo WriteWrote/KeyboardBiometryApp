@@ -92,7 +92,7 @@
             this.lblCollectedData.Name = "lblCollectedData";
             this.lblCollectedData.Size = new System.Drawing.Size(500, 70);
             this.lblCollectedData.TabIndex = 5;
-            this.lblCollectedData.Text = "Итоговые данные:";
+            this.lblCollectedData.Text = "Вы действительно - вы? Ответ машины: ";
             // 
             // btnSubmitPhrase1
             // 
