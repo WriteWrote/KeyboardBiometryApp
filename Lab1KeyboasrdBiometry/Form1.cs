@@ -139,7 +139,6 @@ namespace Lab1KeyboasrdBiometry
 
         private void button_CalcRes_Click(object sender, EventArgs e)
         {
-            //ToDo: recover stats from statsNNN.txt
             // STATS for all times
             // calculate average time for holding for each letter
             Dictionary<String, long> avgKeyHoldings = new Dictionary<string, long>();
@@ -246,7 +245,7 @@ namespace Lab1KeyboasrdBiometry
 
                 averageHoldingTime /= count;
 
-                writer.WriteLine("\nAverage holding time: " + averageHoldingTime.ToString());
+                writer.WriteLine("\nAverage holding time: " + averageHoldingTime.ToString() + " nanos");
                 writer.WriteLine("Speed: " + typingSpeed.ToString() + " nanos for one letter");
                 Double d = backCount / (spaceCount + 1);
                 writer.WriteLine("Errors: " + d.ToString() + " error/word in average");
@@ -273,19 +272,54 @@ namespace Lab1KeyboasrdBiometry
         {
             using (StreamReader reader = new StreamReader(filepath))
             {
-                while (!reader.EndOfStream)
+                String text = reader.ReadToEnd();
+                String[] lines = text.Split('\n');
+
+                /*
+                dateTime
+                el
+                key -> <long>
+                el
+                average holding time: <long>
+                Speed: <long> nanos for one letter
+                Errors: <Double> error/word in average
+                */
+
+                foreach (var l in lines)
                 {
-                    String line = reader.ReadLine();
-                    /*
-                    dateTime
-                    filename phrase 2 stats:
-                    el
-                    key -> <long>
-                    el
-                    average holding time: <long>
-                    Speed: <long> nanos for one letter
-                    Errors: <Double> error/word in average
-                    */
+                    if (!DateTime.TryParse(l, out DateTime result))
+                    {
+                        if (l.Contains("Average holding time:"))
+                        {
+                            String s = l.Split(':')[1].Trim().Split(' ')[0];
+                            avgHoldings.Add(long.Parse(s.Trim()));
+                        }
+
+                        if (l.Contains("Speed:"))
+                        {
+                            String s = l.Split(':')[1].Trim().Split(' ')[0];
+                            avgSpeeds.Add(long.Parse(s.Trim()));
+                        }
+
+                        if (l.Contains("Errors:"))
+                        {
+                            String s = l.Split(':')[1].Trim().Split(' ')[0];
+                            avgErrors.Add(Double.Parse(s.Trim()));
+                        }
+
+                        if (l.Contains("->"))
+                        {
+                            String[] pairString = l.Split('-');
+                            KeyValuePair<String, long> pair = new KeyValuePair<string, long>(pairString[0].Trim(),
+                                long.Parse(pairString[1].Remove(0, 1).Trim()));
+                            if (!allKeyHoldings.ContainsKey(pair.Key))
+                            {
+                                allKeyHoldings.Add(pair.Key, new List<long>());
+                            }
+
+                            allKeyHoldings[pair.Key].Add(pair.Value);
+                        }
+                    }
                 }
             }
         }
@@ -344,7 +378,16 @@ namespace Lab1KeyboasrdBiometry
                 }
 
                 res /= keyHolding.Value.Count;
-                avgKeyHoldings.Add(keyHolding.Key, res);
+
+                try
+                {
+                    avgKeyHoldings.Add(keyHolding.Key, res);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("");
+                }
+                
             }
         }
     }
