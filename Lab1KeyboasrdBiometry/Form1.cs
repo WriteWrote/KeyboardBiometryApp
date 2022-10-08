@@ -155,9 +155,14 @@ namespace Lab1KeyboasrdBiometry
                 avgError,
                 avgKeyHoldings
             );
+            
+            //TODO: make some predictions where this is actually user or not
+            
 
-            //ToDo: make ClearAll for not-in-void params (clear avg-w/out-s)
-            //ClearAll(avgErrors, avgKeyHoldings, allKeyHoldings, avgSpeeds, avgHoldings);
+            avgKeyHoldings.Clear();
+            avgSpeed = 0;
+            avgError = 0.0;
+            avgHolding = 0;
 
             CalcStats(FILE_PATH_STATS2,
                 avgSpeed,
@@ -165,9 +170,17 @@ namespace Lab1KeyboasrdBiometry
                 avgError,
                 avgKeyHoldings
             );
+            
             //TODO: make some predictions where this is actually user or not
-            //ToDo: * make graphics 
-
+            
+            
+            avgKeyHoldings.Clear();
+            avgSpeed = 0;
+            avgError = 0.0;
+            avgHolding = 0;
+            
+            
+            //ToDo: * make graphics
             //ToDo: решить проблему с русской раскладкой
         }
 
@@ -324,19 +337,6 @@ namespace Lab1KeyboasrdBiometry
             }
         }
 
-        private static void ClearAll<T, K, M>(List<K> oneL, Dictionary<M, T> dict1,
-            Dictionary<M, List<T>> dict2, params List<T>[] lists)
-        {
-            foreach (List<T> list in lists)
-            {
-                list.Clear();
-            }
-
-            oneL.Clear();
-            dict1.Clear();
-            dict2.Clear();
-        }
-
         private void CalcStats(String filepath, long avgSpeed, long avgHolding, Double avgError,
             Dictionary<String, long> avgKeyHoldings)
         {
@@ -387,7 +387,6 @@ namespace Lab1KeyboasrdBiometry
                 {
                     MessageBox.Show("");
                 }
-                
             }
         }
     }
