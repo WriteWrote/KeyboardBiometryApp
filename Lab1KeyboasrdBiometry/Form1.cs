@@ -20,6 +20,10 @@ namespace Lab1KeyboasrdBiometry
         private List<KeyValuePair<String, long>> keysUpDict;
 
         private String password;
+        private static long refAvgHoldingTime;
+        private static long refAvgSpeed;
+        private static Double refAvgError;
+        private static Dictionary<String, long> refKeyHolding;
 
         // score for decision making
         private int score = 0;
@@ -30,6 +34,11 @@ namespace Lab1KeyboasrdBiometry
 
             keysDownDict = new List<KeyValuePair<string, long>>();
             keysUpDict = new List<KeyValuePair<string, long>>();
+
+            refAvgError = 0.0;
+            refAvgSpeed = 0;
+            refAvgHoldingTime = 0;
+            refKeyHolding = new Dictionary<string, long>();
 
             using (StreamReader reader = new StreamReader(FILE_PATH_PASSWORD))
             {
@@ -155,9 +164,6 @@ namespace Lab1KeyboasrdBiometry
                 avgError,
                 avgKeyHoldings
             );
-            
-            //TODO: make some predictions where this is actually user or not
-            
 
             avgKeyHoldings.Clear();
             avgSpeed = 0;
@@ -170,18 +176,22 @@ namespace Lab1KeyboasrdBiometry
                 avgError,
                 avgKeyHoldings
             );
-            
-            //TODO: make some predictions where this is actually user or not
-            
-            
+
             avgKeyHoldings.Clear();
             avgSpeed = 0;
             avgError = 0.0;
             avgHolding = 0;
-            
-            
+
+            if (score > 10)
+            {
+                lblCollectedData.Text = "Вы действительно - вы? Ответ машины: " + "Да";
+            }
+            else
+            {
+                lblCollectedData.Text = "Вы действительно - вы? Ответ машины: " + "Нет";
+            }
+
             //ToDo: * make graphics
-            //ToDo: решить проблему с русской раскладкой
         }
 
         private static long GetNanoseconds()
@@ -243,7 +253,13 @@ namespace Lab1KeyboasrdBiometry
 
                     count += l.Value.Count;
                     long hold = time / l.Value.Count;
+
                     writer.WriteLine(l.Key.ToString() + " -> " + hold.ToString());
+
+                    if (!refKeyHolding.ContainsKey(l.Key))
+                    {
+                        refKeyHolding.Add(l.Key, hold);
+                    }
 
                     if (l.Key.Equals(Keys.Back.ToString()))
                     {
@@ -259,9 +275,12 @@ namespace Lab1KeyboasrdBiometry
                 averageHoldingTime /= count;
 
                 writer.WriteLine("\nAverage holding time: " + averageHoldingTime.ToString() + " nanos");
+                refAvgHoldingTime = averageHoldingTime;
                 writer.WriteLine("Speed: " + typingSpeed.ToString() + " nanos for one letter");
+                refAvgSpeed = typingSpeed;
                 Double d = backCount / (spaceCount + 1);
                 writer.WriteLine("Errors: " + d.ToString() + " error/word in average");
+                refAvgError = d;
                 writer.WriteLine();
             }
         }
@@ -388,6 +407,39 @@ namespace Lab1KeyboasrdBiometry
                     MessageBox.Show("");
                 }
             }
+
+            //////// calculate part
+
+            if (refAvgError < avgError * 1.15 &&
+                refAvgError > avgError * 0.85)
+            {
+                score += 1;
+            }
+
+            if (refAvgSpeed < avgSpeed * 1.15 &&
+                refAvgSpeed > avgSpeed * 0.85)
+            {
+                score += 2;
+            }
+
+            if (refAvgHoldingTime < avgHolding * 1.15 &&
+                refAvgHoldingTime > avgHolding * 0.85)
+            {
+                score += 2;
+            }
+
+            double addon = 0.0;
+            foreach (var key in avgKeyHoldings.Keys)
+            {
+                if (refKeyHolding.ContainsKey(key) &&
+                    refKeyHolding[key] < avgKeyHoldings[key] * 1.15 &&
+                    refKeyHolding[key] > avgKeyHoldings[key] * 0.85)
+                {
+                    addon += 0.25;
+                }
+            }
+
+            score += Convert.ToInt32(addon);
         }
     }
 }
