@@ -182,7 +182,7 @@ namespace Lab1KeyboasrdBiometry
             avgError = 0.0;
             avgHolding = 0;
 
-            if (score > 10)
+            if (score > 15)
             {
                 lblCollectedData.Text = "Вы действительно - вы? Ответ машины: " + "Да";
             }
