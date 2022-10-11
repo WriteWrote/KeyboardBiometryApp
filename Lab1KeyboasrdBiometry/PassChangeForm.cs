@@ -7,7 +7,7 @@ namespace Lab1KeyboasrdBiometry
 {
     public partial class PassChangeForm : Form
     {
-        private const String FILE_PATH_PASSWORD = "C:\\Users\\Рабочая\\Desktop\\BMIL_test\\currentKeyPhrase.txt";
+        private const String FILE_PATH_PASSWORD = "currentKeyPhrase.txt";
         private String password;
         private Form1 parent;
         private List<String> preferredSymbols;
@@ -76,9 +76,9 @@ namespace Lab1KeyboasrdBiometry
                     if (score >= PASSWORD_POINTS)
                     {
                         score = 0;
-                        using (StreamWriter writer = new StreamWriter("currentKeyPhrase.txt", false))
+                        using (StreamWriter writer = new StreamWriter(FILE_PATH_PASSWORD, false))
                         {
-                            writer.WriteLine(password);
+                            writer.WriteLine(newPass);
                         }
                         MessageBox.Show("Password is changed!");
                     }

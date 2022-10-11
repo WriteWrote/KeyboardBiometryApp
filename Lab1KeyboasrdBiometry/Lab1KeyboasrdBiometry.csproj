@@ -44,6 +44,9 @@
         <Reference Include="System.Net.Http" />
         <Reference Include="System.Windows.Forms" />
         <Reference Include="System.Xml" />
+        <Reference Include="ZedGraph">
+          <HintPath>bin\Debug\ZedGraph.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Form1.cs">
@@ -51,6 +54,12 @@
         </Compile>
         <Compile Include="Form1.Designer.cs">
             <DependentUpon>Form1.cs</DependentUpon>
+        </Compile>
+        <Compile Include="GraphForm.cs">
+          <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="GraphForm.Designer.cs">
+          <DependentUpon>GraphForm.cs</DependentUpon>
         </Compile>
         <Compile Include="PassChangeForm.cs">
           <SubType>Form</SubType>

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using ZedGraph;
 
 namespace Lab1KeyboasrdBiometry
 {
@@ -190,8 +192,6 @@ namespace Lab1KeyboasrdBiometry
             {
                 lblCollectedData.Text = "Вы действительно - вы? Ответ машины: " + "Нет";
             }
-
-            //ToDo: * make graphics
         }
 
         private static long GetNanoseconds()
