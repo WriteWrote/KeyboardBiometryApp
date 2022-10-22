@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
 
@@ -8,53 +10,68 @@ namespace Lab1KeyboasrdBiometry
 {
     public partial class GraphForm : Form
     {
-        private ZedGraphControl _control;
+        private ZedGraphControl _control1;
+        private List<long> speeds;
+        private String title, xTitle, yTitle, curveTitle;
 
-        public GraphForm()
+        public GraphForm(List<long> speeds,
+            String title, String xTitle, String yTitle, String curveTitle)
         {
             InitializeComponent();
 
-            _control = new ZedGraphControl();
-            this.Controls.Add(_control);
+            _control1 = new ZedGraphControl();
+            this.Controls.Add(_control1);
+            this.speeds = speeds;
+
+            this.title = title;
+            this.xTitle = xTitle;
+            this.yTitle = yTitle;
+            this.curveTitle = curveTitle;
         }
 
         // Build the Chart
-        private void CreateGraph(ZedGraphControl zgc)
+        private void CreateGraph(ZedGraphControl zgc,
+            String title,
+            String xTitle,
+            String yTitle,
+            String curveTitle,
+            List<long> yValues
+        )
         {
             // get a reference to the GraphPane
             GraphPane myPane = zgc.GraphPane;
 
             // Set the Titles
-            myPane.Title.Text = "My Test Graph\n(For CodeProject Sample)";
-            myPane.XAxis.Title.Text = "My X Axis";
-            myPane.YAxis.Title.Text = "My Y Axis";
+            myPane.Title.Text = title;
+            myPane.XAxis.Title.Text = xTitle;
+            myPane.YAxis.Title.Text = yTitle;
 
-            // Make up some data arrays based on the Sine function
-            double x, y1, y2;
             PointPairList list1 = new PointPairList();
-            PointPairList list2 = new PointPairList();
-            for (int i = 0; i < 36; i++)
+
+            for (int i = 0; i < yValues.Count; i++)
             {
-                x = (double)i + 5;
-                y1 = 1.5 + Math.Sin((double)i * 0.2);
-                y2 = 3.0 * (1.5 + Math.Sin((double)i * 0.2));
-                list1.Add(x, y1);
-                list2.Add(x, y2);
+                list1.Add(i, yValues[i]);
             }
 
             // Generate a red curve with diamond
             // symbols, and "Porsche" in the legend
-            LineItem myCurve = myPane.AddCurve("Porsche",
+            LineItem myCurve = myPane.AddCurve(curveTitle,
                 list1, Color.Red, SymbolType.Diamond);
-
-            // Generate a blue curve with circle
-            // symbols, and "Piper" in the legend
-            LineItem myCurve2 = myPane.AddCurve("Piper",
-                list2, Color.Blue, SymbolType.Circle);
 
             // Tell ZedGraph to refigure the
             // axes since the data have changed
             zgc.AxisChange();
+            // Size the control to fill the form with a margin
+            zgc.Location = new Point(10, 10);
+            // Leave a small margin around the outside of the control
+            zgc.Size = new Size(ClientRectangle.Width - 20,
+                ClientRectangle.Height - 20);
+        }
+
+        private void GraphForm_Load_1(object sender, EventArgs e)
+        {
+            // Setup the graph
+            CreateGraph(_control1, title, xTitle, yTitle, curveTitle, speeds);
         }
     }
 }

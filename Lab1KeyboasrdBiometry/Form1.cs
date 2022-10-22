@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
 
@@ -29,6 +30,8 @@ namespace Lab1KeyboasrdBiometry
 
         // score for decision making
         private int score = 0;
+        // list of average speeds for making graphics
+        List<long> avgSpdsForGist = new List<long>();
 
         public Form1()
         {
@@ -179,7 +182,7 @@ namespace Lab1KeyboasrdBiometry
                 avgKeyHoldings
             );
 
-            avgKeyHoldings.Clear();
+            // avgKeyHoldings.Clear();
             avgSpeed = 0;
             avgError = 0.0;
             avgHolding = 0;
@@ -192,6 +195,23 @@ namespace Lab1KeyboasrdBiometry
             {
                 lblCollectedData.Text = "Вы действительно - вы? Ответ машины: " + "Нет";
             }
+            
+            // make graphics
+            GraphForm g = new GraphForm(avgSpdsForGist,
+                "Скорость ввода парольной фразы\n(за все время)",
+                "Наблюдения, №",
+                "Время, наносекунды*",
+                "измерения");
+            GraphForm g2 = new GraphForm(avgKeyHoldings.Values.ToList(),
+                "Динамика ввода символов парольной фразы\n(текущее наблюдение)",
+                "символы, №",
+                "Время, наносекунды",
+                "измерения");
+            g.Show();
+            g2.Show();
+            avgSpdsForGist.Clear();
+            avgKeyHoldings.Clear();
+            score = 0;
         }
 
         private static long GetNanoseconds()
@@ -361,18 +381,17 @@ namespace Lab1KeyboasrdBiometry
         {
             // score should be at least == 5 for now (if the password was correct)
             Dictionary<String, List<long>> allKeyHoldings = new Dictionary<string, List<long>>();
-            List<long> avgSpeeds = new List<long>();
             List<long> avgHoldings = new List<long>();
             List<Double> avgErrors = new List<double>();
 
-            ReadStats(allKeyHoldings, avgSpeeds, avgHoldings, avgErrors, filepath);
+            ReadStats(allKeyHoldings, avgSpdsForGist, avgHoldings, avgErrors, filepath);
 
-            foreach (var speed in avgSpeeds)
+            foreach (var speed in avgSpdsForGist)
             {
                 avgSpeed += speed;
             }
 
-            avgSpeed /= avgSpeeds.Count;
+            avgSpeed /= avgSpdsForGist.Count;
 
             foreach (var holding in avgHoldings)
             {
