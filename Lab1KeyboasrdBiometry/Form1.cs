@@ -28,6 +28,8 @@ namespace Lab1KeyboasrdBiometry
         private static Double refAvgError;
         private static Dictionary<String, long> refKeyHolding;
 
+        private int CHECK_VALUE = 15;
+
         // score for decision making
         private int score = 0;
         // list of average speeds for making graphics
@@ -187,7 +189,7 @@ namespace Lab1KeyboasrdBiometry
             avgError = 0.0;
             avgHolding = 0;
 
-            if (score > 15)
+            if (score >= CHECK_VALUE)
             {
                 lblCollectedData.Text = "Вы действительно - вы? Ответ машины: " + "Да";
             }
@@ -197,11 +199,13 @@ namespace Lab1KeyboasrdBiometry
             }
             
             // make graphics
+            String MDX = "M = " + MX(avgSpdsForGist).ToString() + "; D = " + DX(avgSpdsForGist).ToString();
+
             GraphForm g = new GraphForm(avgSpdsForGist,
                 "Скорость ввода парольной фразы\n(за все время)",
                 "Наблюдения, №",
                 "Время, наносекунды*",
-                "измерения");
+                MDX);
             GraphForm g2 = new GraphForm(avgKeyHoldings.Values.ToList(),
                 "Динамика ввода символов парольной фразы\n(текущее наблюдение)",
                 "символы, №",
@@ -212,6 +216,30 @@ namespace Lab1KeyboasrdBiometry
             avgSpdsForGist.Clear();
             avgKeyHoldings.Clear();
             score = 0;
+        }
+        
+        // нужен список средних скоростей
+        private static double MX(List<long> a)
+        {
+            double sum = 0;
+            for (int i = 0; i < a.Count; i++)
+            {
+                sum += a[i];
+            }
+
+            return sum / a.Count;
+        }
+        
+        private static double DX(List<long> a)
+        {
+            double sum = 0;
+            for (int i = 0; i < a.Count; i++)
+            {
+                sum += Math.Pow(a[i] - MX(a), 2);
+            }
+
+            sum /= (a.Count * (a.Count - 1));
+            return Math.Sqrt(sum);
         }
 
         private static long GetNanoseconds()
