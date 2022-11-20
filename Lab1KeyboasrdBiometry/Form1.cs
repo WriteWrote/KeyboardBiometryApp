@@ -30,8 +30,11 @@ namespace Lab1KeyboasrdBiometry
 
         private int CHECK_VALUE = 15;
 
+        private User currentUser;
+
         // score for decision making
         private int score = 0;
+
         // list of average speeds for making graphics
         List<long> avgSpdsForGist = new List<long>();
 
@@ -47,9 +50,12 @@ namespace Lab1KeyboasrdBiometry
             refAvgHoldingTime = 0;
             refKeyHolding = new Dictionary<string, long>();
 
-            using (StreamReader reader = new StreamReader(FILE_PATH_PASSWORD))
+            this.currentUser = user;
+
+            using (StreamReader reader = new StreamReader(currentUser.Name + "\\" + FILE_PATH_PASSWORD))
             {
                 password = reader.ReadLine();
+                reader.Close();
             }
         }
 
@@ -78,10 +84,10 @@ namespace Lab1KeyboasrdBiometry
         {
             if (tB_phrase1.Text != "")
             {
-                writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR1);
-                writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR1);
+                writeListToFile(keysDownDict, currentUser.Name + "\\" + FILE_PATH_KEYS_DOWN_PHR1);
+                writeListToFile(keysUpDict, currentUser.Name + "\\" + FILE_PATH_KEYS_UP_PHR1);
 
-                CalculateStats("1", FILE_PATH_STATS1, keysUpDict, keysDownDict);
+                CalculateStats("1", currentUser.Name + "\\" + FILE_PATH_STATS1, keysUpDict, keysDownDict);
 
                 // clear dicts
                 keysDownDict.Clear();
@@ -98,10 +104,10 @@ namespace Lab1KeyboasrdBiometry
         {
             if (tB_phrase2.Text != "")
             {
-                writeListToFile(keysDownDict, FILE_PATH_KEYS_DOWN_PHR2);
-                writeListToFile(keysUpDict, FILE_PATH_KEYS_UP_PHR2);
+                writeListToFile(keysDownDict, currentUser.Name + "\\" + FILE_PATH_KEYS_DOWN_PHR2);
+                writeListToFile(keysUpDict, currentUser.Name + "\\" + FILE_PATH_KEYS_UP_PHR2);
 
-                CalculateStats("2", FILE_PATH_STATS2, keysUpDict, keysDownDict);
+                CalculateStats("2", currentUser.Name + "\\" + FILE_PATH_STATS2, keysUpDict, keysDownDict);
 
                 if (!password.Equals(tB_phrase2.Text))
                 {
@@ -130,6 +136,7 @@ namespace Lab1KeyboasrdBiometry
                 {
                     writer.WriteLine(pair.Key.ToString() + " " + pair.Value.ToString());
                 }
+                writer.Close();
             }
         }
 
@@ -165,7 +172,7 @@ namespace Lab1KeyboasrdBiometry
             // average expectations of errors
             Double avgError = 0.0;
 
-            CalcStats(FILE_PATH_STATS1,
+            CalcStats(currentUser.Name + "\\" + FILE_PATH_STATS1,
                 avgSpeed,
                 avgHolding,
                 avgError,
@@ -177,7 +184,7 @@ namespace Lab1KeyboasrdBiometry
             avgError = 0.0;
             avgHolding = 0;
 
-            CalcStats(FILE_PATH_STATS2,
+            CalcStats(currentUser.Name + "\\" + FILE_PATH_STATS2,
                 avgSpeed,
                 avgHolding,
                 avgError,
@@ -197,7 +204,7 @@ namespace Lab1KeyboasrdBiometry
             {
                 lblCollectedData.Text = "Вы действительно - вы? Ответ машины: " + "Нет";
             }
-            
+
             // make graphics
             String MDX = "M = " + MX(avgSpdsForGist).ToString() + "; D = " + DX(avgSpdsForGist).ToString();
 
@@ -217,7 +224,7 @@ namespace Lab1KeyboasrdBiometry
             avgKeyHoldings.Clear();
             score = 0;
         }
-        
+
         // нужен список средних скоростей
         private static double MX(List<long> a)
         {
@@ -229,7 +236,7 @@ namespace Lab1KeyboasrdBiometry
 
             return sum / a.Count;
         }
-        
+
         private static double DX(List<long> a)
         {
             double sum = 0;
@@ -330,12 +337,14 @@ namespace Lab1KeyboasrdBiometry
                 writer.WriteLine("Errors: " + d.ToString() + " error/word in average");
                 refAvgError = d;
                 writer.WriteLine();
+                
+                writer.Close();
             }
         }
 
         private void btn_ChangePassword_Click(object sender, EventArgs e)
         {
-            PassChangeForm passChangeForm = new PassChangeForm(this);
+            PassChangeForm passChangeForm = new PassChangeForm(this, currentUser);
             passChangeForm.Show();
         }
 
@@ -401,6 +410,8 @@ namespace Lab1KeyboasrdBiometry
                         }
                     }
                 }
+                
+                reader.Close();
             }
         }
 

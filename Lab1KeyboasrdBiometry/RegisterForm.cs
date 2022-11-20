@@ -76,6 +76,7 @@ namespace Lab1KeyboasrdBiometry
                         {
                             sw.Write(newUser.Password);
                         }
+                        sw.Close();
                     }
                 }
             }
@@ -87,6 +88,7 @@ namespace Lab1KeyboasrdBiometry
             using (StreamWriter writer = new StreamWriter(USERLIST, true))
             {
                 writer.WriteLine("\n" + newUser.Name);
+                writer.Close();
             }
         }
 
@@ -118,6 +120,8 @@ namespace Lab1KeyboasrdBiometry
                         avgSpeed = long.Parse(values[0]);
                         avgHoldingTime = long.Parse(values[1]);
                         avgErrors = Double.Parse(values[2]);
+                        
+                        reader.Close();
                     }
                 }
 
@@ -128,6 +132,7 @@ namespace Lab1KeyboasrdBiometry
                     using (StreamReader reader = new StreamReader(currFile))
                     {
                         currPass = reader.ReadToEnd().Trim(new char[] { '\r', '\n' });
+                        reader.Close();
                     }
                 }
 
@@ -162,6 +167,7 @@ namespace Lab1KeyboasrdBiometry
                     list.Add(VARIABLE.Split('\r')[0]);
                 }
 
+                reader.Close();
                 return list;
             }
         }

@@ -15,6 +15,7 @@ namespace Lab1KeyboasrdBiometry
         private List<String> preferredSymbols;
         private List<String> unvantedCombinations;
         private const int PASSWORD_POINTS = 5;
+        private User currentUser;
 
         private Random RANDOM = new Random();
 
@@ -25,13 +26,16 @@ namespace Lab1KeyboasrdBiometry
         private String SYMBOLS = "!@#$%^&*()_+|/.,\\-=\"№;%:?*{}[]~'";
 
 
-        public PassChangeForm(Form1 form)
+        public PassChangeForm(Form1 form, User currentUser)
         {
             InitializeComponent();
 
-            using (StreamReader reader = new StreamReader(FILE_PATH_PASSWORD))
+            this.currentUser = currentUser;
+
+            using (StreamReader reader = new StreamReader(currentUser.Name + "\\" + FILE_PATH_PASSWORD))
             {
                 password = reader.ReadLine();
+                reader.Close();
             }
 
             parent = form;
@@ -44,6 +48,7 @@ namespace Lab1KeyboasrdBiometry
                     {
                         preferredSymbols.Add(reader.ReadLine().Trim());
                     }
+                    reader.Close();
                 }
 
                 unvantedCombinations = new List<string>();
@@ -53,6 +58,7 @@ namespace Lab1KeyboasrdBiometry
                     {
                         unvantedCombinations.Add(reader.ReadLine().Trim());
                     }
+                    reader.Close();
                 }
             }
             catch (Exception ex)
@@ -88,9 +94,10 @@ namespace Lab1KeyboasrdBiometry
                     if (score >= PASSWORD_POINTS)
                     {
                         score = 0;
-                        using (StreamWriter writer = new StreamWriter(FILE_PATH_PASSWORD, false))
+                        using (StreamWriter writer = new StreamWriter(currentUser.Name + "\\" + FILE_PATH_PASSWORD, false))
                         {
                             writer.WriteLine(newPass);
+                            writer.Close();
                         }
 
                         MessageBox.Show("Password is changed!");
