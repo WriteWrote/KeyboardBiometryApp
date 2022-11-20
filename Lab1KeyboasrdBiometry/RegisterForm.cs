@@ -178,6 +178,7 @@ namespace Lab1KeyboasrdBiometry
             List<Double> avgErrors)
         {
             String text = reader.ReadToEnd();
+            reader.Close();
             String[] lines = text.Split('\n');
 
             foreach (var l in lines)
