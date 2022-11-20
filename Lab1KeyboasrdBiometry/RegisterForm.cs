@@ -100,9 +100,6 @@ namespace Lab1KeyboasrdBiometry
                 comboBox_users.Items.Add(name);
             }
 
-
-            // todo: добавить считывание всех файлов, начинающихся с user... и вытаскивание оттуда средних параметров
-
             String currPass = "";
             long avgHoldingTime = 0;
             long avgSpeed = 0;
@@ -111,22 +108,26 @@ namespace Lab1KeyboasrdBiometry
             foreach (var name in names)
             {
                 string currFile = name + "\\phrase1Stats.txt";
-                    if (!File.Exists(currFile))
+                    if (File.Exists(currFile))
                     {
                         //Read stats from last time
                         using (StreamReader reader = new StreamReader(currFile))
                         {
-                            CollectStats(currFile, avgSpeed, avgHoldingTime, avgErrors);
+                            String [] values = CollectStats(currFile, avgSpeed, avgHoldingTime, avgErrors);
+
+                            avgSpeed = long.Parse(values[0]);
+                            avgHoldingTime = long.Parse(values[1]);
+                            avgErrors = Double.Parse(values[2]);
                         }
                     }
 
                     currFile = name + "\\currentKeyPhrase.txt";
-                    if (!File.Exists(currFile))
+                    if (File.Exists(currFile))
                     {
                         //read password for user
                         using (StreamReader reader = new StreamReader(currFile))
                         {
-                            currPass = reader.ReadToEnd();
+                            currPass = reader.ReadToEnd().Trim(new char[]{'\r', '\n'});
                         }
                     }
                     
@@ -144,11 +145,18 @@ namespace Lab1KeyboasrdBiometry
             using (StreamReader reader = new StreamReader(USERLIST))
             {
                 String text = reader.ReadToEnd();
-                return text.Split('\n').ToList();
+                List<String> list = new List<string>();
+
+                foreach (var VARIABLE in text.Split('\n').ToList())
+                {
+                    list.Add(VARIABLE.Split('\r')[0]);
+                }
+                
+                return list;
             }
         }
 
-        private void readRawStats(StreamReader reader,
+        private static void readRawStats(StreamReader reader,
             List<long> avgSpeeds,
             List<long> avgHoldings,
             List<Double> avgErrors)
@@ -181,13 +189,13 @@ namespace Lab1KeyboasrdBiometry
             }
         }
         
-         private void CollectStats(String filepath, long avgSpeed, long avgHolding, Double avgError)
+         private String[] CollectStats(String filepath, long avgSpeed, long avgHolding, Double avgError)
          {
-             List<long> avgSpeeds = new List<long>();
+            List<long> avgSpeeds = new List<long>();
             List<long> avgHoldings = new List<long>();
             List<Double> avgErrors = new List<double>();
 
-            readRawStats( new StreamReader(filepath), avgSpeeds, avgHoldings, avgErrors);
+            readRawStats(new StreamReader(filepath), avgSpeeds, avgHoldings, avgErrors);
 
             foreach (var speed in avgSpeeds)
             {
@@ -210,8 +218,7 @@ namespace Lab1KeyboasrdBiometry
 
             avgError /= avgErrors.Count;
 
-            
-        }
-        
+            return new[] { avgSpeed.ToString(), avgHolding.ToString(), avgError.ToString() };
+         }
     }
 }
