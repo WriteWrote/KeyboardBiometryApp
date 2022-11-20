@@ -37,9 +37,9 @@ namespace Lab1KeyboasrdBiometry
             this.textBox_name = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox_password = new System.Windows.Forms.TextBox();
-            this.listBox_users = new System.Windows.Forms.ListBox();
             this.button_Enter = new System.Windows.Forms.Button();
             this.button_showAll = new System.Windows.Forms.Button();
+            this.textBox_info = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // comboBox_users
@@ -93,15 +93,6 @@ namespace Lab1KeyboasrdBiometry
             this.textBox_password.TabIndex = 5;
             this.textBox_password.Text = "Пароль";
             // 
-            // listBox_users
-            // 
-            this.listBox_users.FormattingEnabled = true;
-            this.listBox_users.ItemHeight = 16;
-            this.listBox_users.Location = new System.Drawing.Point(300, 57);
-            this.listBox_users.Name = "listBox_users";
-            this.listBox_users.Size = new System.Drawing.Size(250, 212);
-            this.listBox_users.TabIndex = 6;
-            // 
             // button_Enter
             // 
             this.button_Enter.Location = new System.Drawing.Point(150, 250);
@@ -120,15 +111,25 @@ namespace Lab1KeyboasrdBiometry
             this.button_showAll.TabIndex = 8;
             this.button_showAll.Text = "Показать статы всех";
             this.button_showAll.UseVisualStyleBackColor = true;
+            this.button_showAll.Click += new System.EventHandler(this.button_showAll_Click);
+            // 
+            // textBox_info
+            // 
+            this.textBox_info.Location = new System.Drawing.Point(300, 50);
+            this.textBox_info.Multiline = true;
+            this.textBox_info.Name = "textBox_info";
+            this.textBox_info.Size = new System.Drawing.Size(250, 225);
+            this.textBox_info.TabIndex = 9;
+            this.textBox_info.Text = "Инфо";
             // 
             // RegisterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 303);
+            this.Controls.Add(this.textBox_info);
             this.Controls.Add(this.button_showAll);
             this.Controls.Add(this.button_Enter);
-            this.Controls.Add(this.listBox_users);
             this.Controls.Add(this.textBox_password);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox_name);
@@ -142,12 +143,13 @@ namespace Lab1KeyboasrdBiometry
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.TextBox textBox_info;
+
         private System.Windows.Forms.Button button_showAll;
 
         private System.Windows.Forms.TextBox textBox_name;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox_password;
-        private System.Windows.Forms.ListBox listBox_users;
         private System.Windows.Forms.Button button_Enter;
 
         private System.Windows.Forms.Button button_Create;

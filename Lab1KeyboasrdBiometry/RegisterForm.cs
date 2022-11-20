@@ -94,7 +94,7 @@ namespace Lab1KeyboasrdBiometry
         {
             users = new List<User>();
             names = readUsernamesFromFile();
-            
+
             foreach (var name in names)
             {
                 comboBox_users.Items.Add(name);
@@ -104,40 +104,50 @@ namespace Lab1KeyboasrdBiometry
             long avgHoldingTime = 0;
             long avgSpeed = 0;
             Double avgErrors = 0.0;
-            
+
             foreach (var name in names)
             {
                 string currFile = name + "\\phrase1Stats.txt";
-                    if (File.Exists(currFile))
+                if (File.Exists(currFile))
+                {
+                    //Read stats from last time
+                    using (StreamReader reader = new StreamReader(currFile))
                     {
-                        //Read stats from last time
-                        using (StreamReader reader = new StreamReader(currFile))
-                        {
-                            String [] values = CollectStats(currFile, avgSpeed, avgHoldingTime, avgErrors);
+                        String[] values = CollectStats(currFile, avgSpeed, avgHoldingTime, avgErrors);
 
-                            avgSpeed = long.Parse(values[0]);
-                            avgHoldingTime = long.Parse(values[1]);
-                            avgErrors = Double.Parse(values[2]);
-                        }
+                        avgSpeed = long.Parse(values[0]);
+                        avgHoldingTime = long.Parse(values[1]);
+                        avgErrors = Double.Parse(values[2]);
                     }
+                }
 
-                    currFile = name + "\\currentKeyPhrase.txt";
-                    if (File.Exists(currFile))
+                currFile = name + "\\currentKeyPhrase.txt";
+                if (File.Exists(currFile))
+                {
+                    //read password for user
+                    using (StreamReader reader = new StreamReader(currFile))
                     {
-                        //read password for user
-                        using (StreamReader reader = new StreamReader(currFile))
-                        {
-                            currPass = reader.ReadToEnd().Trim(new char[]{'\r', '\n'});
-                        }
+                        currPass = reader.ReadToEnd().Trim(new char[] { '\r', '\n' });
                     }
-                    
-                    users.Add(new User(name, currPass, avgHoldingTime, avgSpeed, avgErrors));
+                }
+
+                users.Add(new User(name, currPass, avgHoldingTime, avgSpeed, avgErrors));
             }
         }
 
         private void comboBox_users_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Todo: подтягивать и отображать в textbox статы для конкретного пользователя
+            // через зад, но я хз, это не джава
+            List<User> selectedUser = users.Where(x => x.Name.Equals(comboBox_users.SelectedItem)).ToList();
+
+            if (selectedUser.Count != 0)
+            {
+                textBox_info.Text = "Name: " + selectedUser[0].Name + Environment.NewLine +
+                                    "Password: " + selectedUser[0].Password + Environment.NewLine +
+                                    "Speed: " + selectedUser[0].AvgSpeed + Environment.NewLine +
+                                    "Holding time: " + selectedUser[0].AvgHoldingTime + Environment.NewLine +
+                                    "Errors: " + selectedUser[0].AvgErrors + Environment.NewLine;
+            }
         }
 
         private List<String> readUsernamesFromFile()
@@ -151,7 +161,7 @@ namespace Lab1KeyboasrdBiometry
                 {
                     list.Add(VARIABLE.Split('\r')[0]);
                 }
-                
+
                 return list;
             }
         }
@@ -188,9 +198,9 @@ namespace Lab1KeyboasrdBiometry
                 }
             }
         }
-        
-         private String[] CollectStats(String filepath, long avgSpeed, long avgHolding, Double avgError)
-         {
+
+        private String[] CollectStats(String filepath, long avgSpeed, long avgHolding, Double avgError)
+        {
             List<long> avgSpeeds = new List<long>();
             List<long> avgHoldings = new List<long>();
             List<Double> avgErrors = new List<double>();
@@ -202,23 +212,57 @@ namespace Lab1KeyboasrdBiometry
                 avgSpeed += speed;
             }
 
-            avgSpeed /= avgSpeeds.Count;
+            if (avgSpeeds.Count == 0)
+            {
+                avgSpeed = 0;
+            }
+            else
+            {
+                avgSpeed /= avgSpeeds.Count;
+            }
 
             foreach (var holding in avgHoldings)
             {
                 avgHolding += holding;
             }
 
-            avgHolding /= avgHoldings.Count;
+            if (avgHoldings.Count == 0)
+            {
+                avgHolding = 0;
+            }
+            else
+            {
+                avgHolding /= avgHoldings.Count;
+            }
 
             foreach (var error in avgErrors)
             {
                 avgError += error;
             }
 
-            avgError /= avgErrors.Count;
+            if (avgErrors.Count == 0)
+            {
+                avgError = 0;
+            }
+            else
+            {
+                avgError /= avgErrors.Count;
+            }
 
             return new[] { avgSpeed.ToString(), avgHolding.ToString(), avgError.ToString() };
-         }
+        }
+
+        private void button_showAll_Click(object sender, EventArgs e)
+        {
+            textBox_info.Text = "";
+            foreach (var user in users)
+            {
+                textBox_info.Text += "Name: " + user.Name + Environment.NewLine +
+                                     "Password: " + user.Password + Environment.NewLine +
+                                     "Speed: " + user.AvgSpeed + Environment.NewLine +
+                                     "Holding time: " + user.AvgHoldingTime + Environment.NewLine +
+                                     "Errors: " + user.AvgErrors + Environment.NewLine + Environment.NewLine;
+            }
+        }
     }
 }
