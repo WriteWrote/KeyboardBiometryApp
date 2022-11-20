@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using StreamWriter = System.IO.StreamWriter;
 
 namespace Lab1KeyboasrdBiometry
 {
@@ -11,9 +12,12 @@ namespace Lab1KeyboasrdBiometry
         private String USERLIST = "userlist.txt";
         private List<String> names;
         private List<String> FILES;
+        private List<User> users;
         public RegisterForm()
         {
             InitializeComponent();
+
+            FILES = new List<string>();
             
             FILES.Add("currentKeyPhrase");
             FILES.Add("phr1KDownLog");
@@ -40,25 +44,40 @@ namespace Lab1KeyboasrdBiometry
             
             // creating files w/ stats for user
             Directory.CreateDirectory(newUser.Name);
-            string path = @"c:\temp\MyTest.txt";
-            if (!File.Exists("\\" + newUser.Name + ""))
+
+            foreach (var filepath in FILES)
             {
-                // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(path))
+                string currFile = newUser.Name + "\\" + filepath + ".txt";
+                if (!File.Exists(currFile))
                 {
-                    sw.WriteLine("Hello");
-                    sw.WriteLine("And");
-                    sw.WriteLine("Welcome");
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(currFile))
+                    {
+                        sw.Write("");
+                        if (filepath.Contains("KeyPhrase"))
+                        {
+                            sw.Write(newUser.Password);
+                        }
+                    }
                 }
             }
-
+         
             // adding username to users
+            names.Add(newUser.Name);
+            users.Add(newUser);
+            
+            using (StreamWriter writer = new StreamWriter(USERLIST, true))
+            {
+                writer.WriteLine("\n" + newUser.Name);
+            }
 
         }
 
         private void RegisterForm_Load(object sender, EventArgs e)
         {
+            users = new List<User>();
             names = new List<string>();
+            
             using (StreamReader reader = new StreamReader(USERLIST))
             {
                 String text = reader.ReadToEnd();
