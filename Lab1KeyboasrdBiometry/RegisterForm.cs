@@ -13,12 +13,13 @@ namespace Lab1KeyboasrdBiometry
         private List<String> names;
         private List<String> FILES;
         private List<User> users;
+
         public RegisterForm()
         {
             InitializeComponent();
 
             FILES = new List<string>();
-            
+
             FILES.Add("currentKeyPhrase");
             FILES.Add("phr1KDownLog");
             FILES.Add("phr2KDownLog");
@@ -30,8 +31,26 @@ namespace Lab1KeyboasrdBiometry
 
         private void button_Enter_Click(object sender, EventArgs e)
         {
-            Form1 mainForm = new Form1();
-            mainForm.Show();
+            //todo: select and provide correct user for form1
+            if (comboBox_users.SelectedItem == null)
+            {
+                MessageBox.Show("Выберите пользователя");
+            }
+            else
+            {
+                // через зад, но я хз, это не джава
+                List<User> selectedUser = users.Where(x => x.Name.Equals(comboBox_users.SelectedItem)).ToList();
+
+                if (selectedUser.Count != 0)
+                {
+                    Form1 mainForm = new Form1(selectedUser[0]);
+                    mainForm.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Нет такого пользователя, вы сломали программу!");
+                }
+            }
         }
 
         private void button_Create_Click(object sender, EventArgs e)
@@ -41,7 +60,7 @@ namespace Lab1KeyboasrdBiometry
                 0,
                 0,
                 0);
-            
+
             // creating files w/ stats for user
             Directory.CreateDirectory(newUser.Name);
 
@@ -61,23 +80,22 @@ namespace Lab1KeyboasrdBiometry
                     }
                 }
             }
-         
+
             // adding username to users
             names.Add(newUser.Name);
             users.Add(newUser);
-            
+
             using (StreamWriter writer = new StreamWriter(USERLIST, true))
             {
                 writer.WriteLine("\n" + newUser.Name);
             }
-
         }
 
         private void RegisterForm_Load(object sender, EventArgs e)
         {
             users = new List<User>();
             names = new List<string>();
-            
+
             using (StreamReader reader = new StreamReader(USERLIST))
             {
                 String text = reader.ReadToEnd();
@@ -88,8 +106,8 @@ namespace Lab1KeyboasrdBiometry
             {
                 comboBox_users.Items.Add(name);
             }
-            
-            
+
+
             // todo: добавить считывание всех файлов, начинающихся с user... и вытаскивание оттуда средних параметров
         }
 

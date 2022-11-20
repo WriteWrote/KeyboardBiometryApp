@@ -35,7 +35,7 @@ namespace Lab1KeyboasrdBiometry
         // list of average speeds for making graphics
         List<long> avgSpdsForGist = new List<long>();
 
-        public Form1()
+        public Form1(User user)
         {
             InitializeComponent();
 
