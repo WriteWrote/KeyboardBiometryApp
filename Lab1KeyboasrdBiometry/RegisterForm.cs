@@ -23,7 +23,7 @@ namespace Lab1KeyboasrdBiometry
 
         private void button_Create_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -44,6 +44,11 @@ namespace Lab1KeyboasrdBiometry
             {
                 comboBox_users.Items.Add(name);
             }
+        }
+
+        private void comboBox_users_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Todo: подтягивать и отображать в textbox статы для конкретного пользователя
         }
     }
 }

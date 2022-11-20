@@ -39,6 +39,7 @@ namespace Lab1KeyboasrdBiometry
             this.textBox_password = new System.Windows.Forms.TextBox();
             this.listBox_users = new System.Windows.Forms.ListBox();
             this.button_Enter = new System.Windows.Forms.Button();
+            this.button_showAll = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // comboBox_users
@@ -48,6 +49,7 @@ namespace Lab1KeyboasrdBiometry
             this.comboBox_users.Name = "comboBox_users";
             this.comboBox_users.Size = new System.Drawing.Size(250, 24);
             this.comboBox_users.TabIndex = 0;
+            this.comboBox_users.SelectedIndexChanged += new System.EventHandler(this.comboBox_users_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -95,9 +97,9 @@ namespace Lab1KeyboasrdBiometry
             // 
             this.listBox_users.FormattingEnabled = true;
             this.listBox_users.ItemHeight = 16;
-            this.listBox_users.Location = new System.Drawing.Point(300, 25);
+            this.listBox_users.Location = new System.Drawing.Point(300, 57);
             this.listBox_users.Name = "listBox_users";
-            this.listBox_users.Size = new System.Drawing.Size(250, 244);
+            this.listBox_users.Size = new System.Drawing.Size(250, 212);
             this.listBox_users.TabIndex = 6;
             // 
             // button_Enter
@@ -110,11 +112,21 @@ namespace Lab1KeyboasrdBiometry
             this.button_Enter.UseVisualStyleBackColor = true;
             this.button_Enter.Click += new System.EventHandler(this.button_Enter_Click);
             // 
+            // button_showAll
+            // 
+            this.button_showAll.Location = new System.Drawing.Point(300, 15);
+            this.button_showAll.Name = "button_showAll";
+            this.button_showAll.Size = new System.Drawing.Size(250, 25);
+            this.button_showAll.TabIndex = 8;
+            this.button_showAll.Text = "Показать статы всех";
+            this.button_showAll.UseVisualStyleBackColor = true;
+            // 
             // RegisterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 303);
+            this.Controls.Add(this.button_showAll);
             this.Controls.Add(this.button_Enter);
             this.Controls.Add(this.listBox_users);
             this.Controls.Add(this.textBox_password);
@@ -125,9 +137,12 @@ namespace Lab1KeyboasrdBiometry
             this.Controls.Add(this.comboBox_users);
             this.Name = "RegisterForm";
             this.Text = "RegisterForm";
+            this.Load += new System.EventHandler(this.RegisterForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button button_showAll;
 
         private System.Windows.Forms.TextBox textBox_name;
         private System.Windows.Forms.Label label2;
