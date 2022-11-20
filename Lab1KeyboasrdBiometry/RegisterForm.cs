@@ -31,7 +31,6 @@ namespace Lab1KeyboasrdBiometry
 
         private void button_Enter_Click(object sender, EventArgs e)
         {
-            //todo: select and provide correct user for form1
             if (comboBox_users.SelectedItem == null)
             {
                 MessageBox.Show("Выберите пользователя");
@@ -94,14 +93,8 @@ namespace Lab1KeyboasrdBiometry
         private void RegisterForm_Load(object sender, EventArgs e)
         {
             users = new List<User>();
-            names = new List<string>();
-
-            using (StreamReader reader = new StreamReader(USERLIST))
-            {
-                String text = reader.ReadToEnd();
-                names = text.Split('\n').ToList();
-            }
-
+            names = readUsernamesFromFile();
+            
             foreach (var name in names)
             {
                 comboBox_users.Items.Add(name);
@@ -109,11 +102,51 @@ namespace Lab1KeyboasrdBiometry
 
 
             // todo: добавить считывание всех файлов, начинающихся с user... и вытаскивание оттуда средних параметров
+
+            String currPass = "";
+            long avgHoldingTime = 0;
+            long avgSpeed = 0;
+            Double avgErrors = 0.0;
+            
+            foreach (var name in names)
+            {
+                string currFile = name + "\\phrase1Stats.txt";
+                    if (!File.Exists(currFile))
+                    {
+                        //Read stats from last time
+                        using (StreamReader reader = new StreamReader(currFile))
+                        {
+                            
+                            
+                        }
+                    }
+
+                    currFile = name + "\\currentKeyPhrase.txt";
+                    if (!File.Exists(currFile))
+                    {
+                        //read password for user
+                        using (StreamReader reader = new StreamReader(currFile))
+                        {
+                            currPass = reader.ReadToEnd();
+                        }
+                    }
+                    
+                    users.Add(new User(name, currPass, avgHoldingTime, avgSpeed, avgErrors));
+            }
         }
 
         private void comboBox_users_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Todo: подтягивать и отображать в textbox статы для конкретного пользователя
+        }
+
+        private List<String> readUsernamesFromFile()
+        {
+            using (StreamReader reader = new StreamReader(USERLIST))
+            {
+                String text = reader.ReadToEnd();
+                return text.Split('\n').ToList();
+            }
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Lab1KeyboasrdBiometry
         private String password;
         private long avgHoldingTime;
         private long avgSpeed;
-        private long avgErrors;
+        private Double avgErrors;
         
         //todo: можно добавить словарик с удержанием букв, но опустим пока
 
-        public User(string name, string password, long avgHoldingTime, long avgSpeed, long avgErrors)
+        public User(string name, string password, long avgHoldingTime, long avgSpeed, Double avgErrors)
         {
             this.name = name;
             this.password = password;
