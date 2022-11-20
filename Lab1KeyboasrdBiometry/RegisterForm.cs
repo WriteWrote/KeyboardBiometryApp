@@ -116,8 +116,7 @@ namespace Lab1KeyboasrdBiometry
                         //Read stats from last time
                         using (StreamReader reader = new StreamReader(currFile))
                         {
-                            
-                            
+                            CollectStats(currFile, avgSpeed, avgHoldingTime, avgErrors);
                         }
                     }
 
@@ -148,5 +147,71 @@ namespace Lab1KeyboasrdBiometry
                 return text.Split('\n').ToList();
             }
         }
+
+        private void readRawStats(StreamReader reader,
+            List<long> avgSpeeds,
+            List<long> avgHoldings,
+            List<Double> avgErrors)
+        {
+            String text = reader.ReadToEnd();
+            String[] lines = text.Split('\n');
+
+            foreach (var l in lines)
+            {
+                if (!DateTime.TryParse(l, out DateTime result))
+                {
+                    if (l.Contains("Average holding time:"))
+                    {
+                        String s = l.Split(':')[1].Trim().Split(' ')[0];
+                        avgHoldings.Add(long.Parse(s.Trim()));
+                    }
+
+                    if (l.Contains("Speed:"))
+                    {
+                        String s = l.Split(':')[1].Trim().Split(' ')[0];
+                        avgSpeeds.Add(long.Parse(s.Trim()));
+                    }
+
+                    if (l.Contains("Errors:"))
+                    {
+                        String s = l.Split(':')[1].Trim().Split(' ')[0];
+                        avgErrors.Add(Double.Parse(s.Trim()));
+                    }
+                }
+            }
+        }
+        
+         private void CollectStats(String filepath, long avgSpeed, long avgHolding, Double avgError)
+         {
+             List<long> avgSpeeds = new List<long>();
+            List<long> avgHoldings = new List<long>();
+            List<Double> avgErrors = new List<double>();
+
+            readRawStats( new StreamReader(filepath), avgSpeeds, avgHoldings, avgErrors);
+
+            foreach (var speed in avgSpeeds)
+            {
+                avgSpeed += speed;
+            }
+
+            avgSpeed /= avgSpeeds.Count;
+
+            foreach (var holding in avgHoldings)
+            {
+                avgHolding += holding;
+            }
+
+            avgHolding /= avgHoldings.Count;
+
+            foreach (var error in avgErrors)
+            {
+                avgError += error;
+            }
+
+            avgError /= avgErrors.Count;
+
+            
+        }
+        
     }
 }

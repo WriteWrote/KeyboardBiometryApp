@@ -45,7 +45,7 @@ namespace Lab1KeyboasrdBiometry
             set => avgSpeed = value;
         }
 
-        public long AvgErrors
+        public Double AvgErrors
         {
             get => avgErrors;
             set => avgErrors = value;
